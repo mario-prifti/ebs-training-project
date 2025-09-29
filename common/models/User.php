@@ -246,7 +246,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getChatRooms(): ActiveQuery
     {
-        return $this->hasMany(ChatRoom::class, ['user_id' => 'id']);
+        return $this->hasMany(ChatConversation::class, ['user_id' => 'id']);
     }
 
     /**
@@ -254,7 +254,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAdminChatRooms(): ActiveQuery
     {
-        return $this->hasMany(ChatRoom::class, ['admin_id' => 'id']);
+        return $this->hasMany(ChatConversation::class, ['admin_id' => 'id']);
     }
 
     /**

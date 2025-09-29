@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\enums\ChatRoomStatusType;
 use common\enums\UserType;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -20,7 +21,7 @@ use yii\db\Exception;
  * @property bool $is_read
  * @property string $created_at
  *
- * @property ChatRoom $chatRoom
+ * @property ChatConversation $chatRoom
  * @property User $sender
  */
 class ChatMessage extends ActiveRecord
@@ -79,11 +80,11 @@ class ChatMessage extends ActiveRecord
     }
 
     /**
-     * Gets query for [[ChatRoom]].
+     * Gets query for [[ChatConversation]].
      */
     public function getChatRoom(): ActiveQuery
     {
-        return $this->hasOne(ChatRoom::class, ['id' => 'chat_room_id']);
+        return $this->hasOne(ChatConversation::class, ['id' => 'chat_room_id']);
     }
 
     /**
@@ -98,9 +99,19 @@ class ChatMessage extends ActiveRecord
      * Mark message as read
      * @throws Exception
      */
-    public function markAsRead(): bool
+    public function afterSave($insert, $changedAttributes): void
     {
-        $this->is_read = true;
-        return $this->save(false);
+        parent::afterSave($insert, $changedAttributes);
+        if ($insert) {
+            $this->chatRoom->touch('updated_at');
+
+            if ($this->sender_type === UserType::USER->value && !$this->chatRoom->admin_id) {
+                $this->chatRoom->status = ChatRoomStatusType::STATUS_PENDING;
+                $this->chatRoom->save();
+            } elseif ($this->sender_type === UserType::ADMIN->value && $this->chatRoom->status === ChatRoomStatusType::STATUS_PENDING->value) {
+                $this->chatRoom->status = ChatRoomStatusType::STATUS_ACTIVE->value;
+                $this->chatRoom->save();
+            }
+        }
     }
 }

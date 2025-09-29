@@ -10,7 +10,7 @@ use yii\db\Exception;
 use yii\db\T;
 
 /**
- * ChatRoom model
+ * ChatConversation model
  *
  * @property int $id
  * @property int $user_id
@@ -25,7 +25,7 @@ use yii\db\T;
  * @property-read null|bool|string|int $unreadMessagesCount
  * @property User $admin
  */
-class ChatRoom extends ActiveRecord
+class ChatConversation extends ActiveRecord
 {
 
     public static function tableName(): string
@@ -46,7 +46,7 @@ class ChatRoom extends ActiveRecord
             [['user_id'], 'required'],
             [['user_id', 'admin_id'], 'integer'],
             [['status'], 'string', 'max' => 20],
-            [['status'], 'in', 'range' => [ChatRoomStatusType::STATUS_INACTIVE->value, ChatRoomStatusType::STATUS_ACTIVE->value]],
+            [['status'], 'in', 'range' => ChatRoomStatusType::values()],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -111,7 +111,7 @@ class ChatRoom extends ActiveRecord
      * Find or create chat room for user
      * @throws Exception
      */
-    public static function findOrCreateForUser($userId): ChatRoom|ActiveRecord|null
+    public static function findOrCreateConversation($userId): ChatConversation|ActiveRecord|null
     {
         $chatRoom = self::find()
             ->where(['user_id' => $userId, 'status' => ChatRoomStatusType::STATUS_ACTIVE->value])

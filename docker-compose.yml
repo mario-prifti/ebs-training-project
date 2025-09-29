@@ -5,34 +5,59 @@ services:
   frontend:
     build: frontend
     ports:
-      - 20080:80
+      - "20080:80"
     volumes:
       # Re-use local composer cache via host-volume
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
       # Mount source-code for development
       - ./:/app
+    depends_on:
+      - mysql
+      - websocket
+    networks:
+      - app-network
 
   backend:
     build: backend
     ports:
-      - 21080:80
+      - "21080:80"
     volumes:
-      # Re-use local composer cache via host-volume
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      # Mount source-code for development
       - ./:/app
+    depends_on:
+      - mysql
+      - websocket
+    networks:
+      - app-network
+
+  websocket:
+    build: backend
+    command: php /app/yii chat/start 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - YII_ENV=dev
 
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0.33
     environment:
       - MYSQL_ROOT_PASSWORD=verysecret
       - MYSQL_DATABASE=yii2advanced
       - MYSQL_USER=yii2advanced
       - MYSQL_PASSWORD=secret
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
 
-  #pgsql:
-  #  image: postgres:9.5
-  #  environment:
-  #    - POSTGRES_DB=yii2advanced
-  #    - POSTGRES_USER=yii2advanced
-  #    - POSTGRES_PASSWORD=secret
+networks:
+  app-network:
+    driver: bridge

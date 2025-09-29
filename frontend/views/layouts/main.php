@@ -41,6 +41,8 @@ AppAsset::register($this);
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
+    } else {
+        $menuItems[] = ['label' => 'Support', 'url' => ['/support/chat']];
     }
 
     echo Nav::widget([
