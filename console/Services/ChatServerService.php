@@ -137,7 +137,7 @@ class ChatServerService implements MessageComponentInterface
 
         // Save message
         $message = new ChatMessage();
-        $message->chat_room_id = $from->conversation_id;
+        $message->conversation_id = $from->conversation_id;
         $message->sender_id = $from->user_id;
         $message->sender_type = $senderType;
         $message->message = $data['message'];
@@ -152,7 +152,7 @@ class ChatServerService implements MessageComponentInterface
         $broadcastData = [
             'type' => 'message',
             'id' => $message->id,
-            'conversation_id' => $message->chat_room_id, // keep client key for compatibility
+            'conversation_id' => $message->conversation_id, // keep client key for compatibility
             'sender_id' => $message->sender_id,
             'sender_type' => $message->sender_type,
             'sender_name' => $user ? $user->username : 'Unknown',
@@ -195,7 +195,7 @@ class ChatServerService implements MessageComponentInterface
         ChatMessage::updateAll(
             ['is_read' => true],
             [
-                'chat_room_id' => $from->conversation_id,
+                'conversation_id' => $from->conversation_id,
                 'sender_type' => $senderType,
                 'is_read' => false
             ]
@@ -215,7 +215,7 @@ class ChatServerService implements MessageComponentInterface
         if (!isset($conn->conversation_id)) return;
 
         $messages = ChatMessage::find()
-            ->where(['chat_room_id' => $conn->conversation_id])
+            ->where(['conversation_id' => $conn->conversation_id])
             ->orderBy(['created_at' => SORT_DESC])
             ->limit(50)
             ->all();
@@ -227,7 +227,7 @@ class ChatServerService implements MessageComponentInterface
             $data = [
                 'type' => 'message',
                 'id' => $message->id,
-                'conversation_id' => $message->chat_room_id,
+                'conversation_id' => $message->conversation_id,
                 'sender_id' => $message->sender_id,
                 'sender_type' => $message->sender_type,
                 'sender_name' => $user ? $user->username : 'Unknown',

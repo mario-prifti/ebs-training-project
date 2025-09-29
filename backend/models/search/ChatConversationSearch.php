@@ -90,11 +90,11 @@ class ChatConversationSearch extends ChatConversation
         // Has unread messages from user
         if ($this->unread_gt === '1' || $this->unread_gt === 1) {
             $query->andWhere(new Expression(
-                "(SELECT COUNT(1) FROM chat_messages m WHERE m.chat_room_id = c.id AND m.is_read = 0 AND m.sender_type = 'user') > 0"
+                "(SELECT COUNT(1) FROM chat_messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_type = 'user') > 0"
             ));
         } elseif ($this->unread_gt === '0' || $this->unread_gt === 0) {
             $query->andWhere(new Expression(
-                "(SELECT COUNT(1) FROM chat_messages m WHERE m.chat_room_id = c.id AND m.is_read = 0 AND m.sender_type = 'user') = 0"
+                "(SELECT COUNT(1) FROM chat_messages m WHERE m.conversation_id = c.id AND m.is_read = 0 AND m.sender_type = 'user') = 0"
             ));
         }
 

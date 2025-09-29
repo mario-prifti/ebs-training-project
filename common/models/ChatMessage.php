@@ -14,7 +14,7 @@ use yii\db\Exception;
  * ChatMessage model
  *
  * @property int $id
- * @property int $chat_room_id
+ * @property int $conversation_id
  * @property int $sender_id
  * @property string $sender_type
  * @property string $message
@@ -53,8 +53,8 @@ class ChatMessage extends ActiveRecord
     public function rules()
     {
         return [
-            [['chat_room_id', 'sender_id', 'sender_type', 'message'], 'required'],
-            [['chat_room_id', 'sender_id'], 'integer'],
+            [['conversation_id', 'sender_id', 'sender_type', 'message'], 'required'],
+            [['conversation_id', 'sender_id'], 'integer'],
             [['message'], 'string'],
             [['is_read'], 'boolean'],
             [['sender_type'], 'string', 'max' => 10],
@@ -70,7 +70,7 @@ class ChatMessage extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'chat_room_id' => 'Chat Room ID',
+            'conversation_id' => 'Conversation ID',
             'sender_id' => 'Sender ID',
             'sender_type' => 'Sender Type',
             'message' => 'Message',
@@ -84,7 +84,7 @@ class ChatMessage extends ActiveRecord
      */
     public function getChatRoom(): ActiveQuery
     {
-        return $this->hasOne(ChatConversation::class, ['id' => 'chat_room_id']);
+        return $this->hasOne(ChatConversation::class, ['id' => 'conversation_id']);
     }
 
     /**

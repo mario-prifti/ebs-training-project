@@ -1,5 +1,3 @@
-
-// frontend/views/support/chat.php
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -177,7 +175,7 @@ try {
 
         connect() {
             this.updateConnectionStatus('Connecting...');
-            this.ws = new WebSocket('ws://localhost:8080');
+            this.ws = new WebSocket('ws://localhost:8080','echo-protocol');
 
             this.ws.onopen = () => {
                 console.log('Connected to support chat');

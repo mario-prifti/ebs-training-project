@@ -30,7 +30,7 @@ class ChatConversation extends ActiveRecord
 
     public static function tableName(): string
     {
-        return 'chat_room';
+        return 'chat_conversations';
     }
 
     public function behaviors(): array
@@ -68,7 +68,7 @@ class ChatConversation extends ActiveRecord
      */
     public function getChatMessages(): ActiveQuery
     {
-        return $this->hasMany(ChatMessage::class, ['chat_room_id' => 'id'])
+        return $this->hasMany(ChatMessage::class, ['conversation_id' => 'id'])
             ->orderBy(['created_at' => SORT_ASC]);
     }
 
@@ -93,7 +93,7 @@ class ChatConversation extends ActiveRecord
      */
     public function getLatestMessage(): ActiveQuery
     {
-        return $this->hasOne(ChatMessage::class, ['chat_room_id' => 'id'])
+        return $this->hasOne(ChatMessage::class, ['conversation_id' => 'id'])
             ->orderBy(['created_at' => SORT_DESC]);
     }
 
@@ -102,7 +102,7 @@ class ChatConversation extends ActiveRecord
      */
     public function getUnreadMessagesCount(): bool|int|string|null
     {
-        return $this->hasMany(ChatMessage::class, ['chat_room_id' => 'id'])
+        return $this->hasMany(ChatMessage::class, ['conversation_id' => 'id'])
             ->where(['is_read' => false, 'sender_type' => 'user'])
             ->count();
     }
